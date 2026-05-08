@@ -1,5 +1,5 @@
 let button = document.getElementById("button1")
-let output = document.getElementById("output")
+let output = document.getElementById("sidebar_list")
 let i_title = document.getElementById("i_title").value
 //let i_alteration = document.getElementById("i_alteration").value
 //let i_path = document.getElementById("i_path").value
@@ -8,6 +8,7 @@ let s_path = document.getElementById("s_path")
 
 button.addEventListener("click", do_thing)
 
+const url = 'http://localhost:'+port+'/'
 
 async function fill_alterations(){
 	let alterations = await fetch('http://localhost:8081/alterations')
@@ -36,7 +37,28 @@ async function fill_paths(){
 }
 fill_paths()
 
+async function set_character_name(){
+	let char_name = document.getElementById("character_name")
+	let name = await fetch(url+'character/1/name')
+	char_name.innerHTML = name
+}
+set_character_name()
+async function set_character_level(){
+	let char_level = document.getElementById("character_level")
+	let level = await fetch(url+'character/1/level')
+	char_level.innerHTML = level
+}
+set_character_level()
+async function set_character_advance_points(){
+	let char_advance_points = document.getElementById("character_advance_points")
+	let advance_points = await fetch(url+'character/1/advance_points')
+	char_advance_points.innerHTML = advance_points
+}
+set_character_advance_points()
 async function do_thing(){
+	
+	i_title = document.getElementById("i_title").value
+
 	let si = s_alteration.options.selectedIndex
 	let s_alt = s_alteration.options[si]
 	console.log(s_alt.value + ' '+ s_alt.innerHTML)
@@ -44,8 +66,6 @@ async function do_thing(){
 	si = s_path.options.selectedIndex
 	let selected_path = s_path.options[si]
 	console.log(selected_path.value + ' '+ selected_path.innerHTML)
-	
-	console.log(i_title)
 	
 	let statement = ''
 	if(i_title==''){
@@ -58,16 +78,51 @@ async function do_thing(){
 	let data = await result.json()
 	data = data[0]["values"]
 	console.log(data)
-	let out = "<div class='ability'>"//data[0][1]+"<br>"+data[0][5]+"<br>"
+	let out = ''    //"<div class='ability'>"
 	for(let i=0; i<data.length; i++){
-		if(data[i][0]==null){
-			out+='</div>'+'<div class="ability">'
-			out+="<hr><h3>"+data[i][1]+"</h3><br>"
-		}else{
-			out+="<h5>"+data[i][1]+"</h5><br>"
+		if(data[i][0]!=null){
+			let parent = data[i][0]
 		}
+		if(data[i][0]==null){
+			if(i>1){
+				out+=`
+					<br>
+					<input type="button" class="add_me" value="Add">
+					</div>
+				`
+			}
+			out+='<div class="ability">'
+			//title ability
+			out+="<div class='ability_title'>"+data[i][1]+"</div><br>"
+		}else{
+			//title feat
+			out+=`
+				<div class='feat_title'>
+					<input type="checkbox">
+					<label>`+data[i][1]+`<label>
+				</div><br>
+			`
+		}
+		//description
 		out+=data[i][5]+"<br>"
 	}
-	out = '<div class="abiilty">'+out+'</div>'
+	out+=`
+		<br>
+		<input type="button" class="add_me" value="Add">
+		</div>
+	`
 	output.innerHTML= out
+
+	const add_buttons = document.getElementsByClassName("add_me");
+	for(let i = 0; i<add_buttons.length; i++){
+		let b = add_buttons.item(i)
+		b.addEventListener("click", ()=>{
+			document.getElementById("detail_view").innerHTML += b.parentElement.outerHTML 
+			console.log(b.parentElement)
+		})
+	}
+}
+
+function addAbility(a){
+	console.log(a)
 }

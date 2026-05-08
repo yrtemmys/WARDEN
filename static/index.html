@@ -5,23 +5,86 @@
 			body{
 				color: white;
 				background-color: #003311;
+				height: 100vh;
+			}
+			.flex_container{
+				display:flex;
+			}
+			.flex_element{
+				flex: 1;
+				height: 100vh;
+				overflow-y: scroll;
+				height: 100vh;
+			}
+			.sidebar{
+				flex: 0.7;
+			}
+			.sidebar_list{
+
+			}
+			.vertical_divider{
+				flex: 0.01;
+				border-left: 1px solid #ffffff;
+			}
+			.header{
+			}
+			.header *{
+				flex:1;
 			}
 			.ability{
 				background-color: #006644;	
+				padding: 15px;
+				margin: 5px;
+				border-color: #668822;
+				border-style: groove;
+				border-width: 5px;
+				border-radius: 5px;
+			}
+			.ability:hover{
+				background-color: #117755;
+			}
+			.ability_title{
+				font-size: x-large;	
+				line-height: 1;
+				font-weight: bold;
+				margin-bottom: -10px;
+			}
+			.feat{
+			
+			}
+			.feat_title{	
+				font-size: large;
+				font-weight: bold;	
+				line-height: 0.1;
+				margin-top: 20px;
+				margin-bottom: -10px;
 			}
 		</style>
 	</head>
 	<body>
-		<h1>real warden site</h1>
-		<input type="button", id="button1", value="hello">
-		<br>
-		<label>Title</label><input type="text", id="i_title">
-		<br>
-		<label>Alterations: </label><select id="s_alteration"></select>
-		<br>
-		<label>Paths: </label><select id="s_path"></select>
-		<hr>
-		<div id="output">ya</div>
+		<div class="flex_container header">
+			<h1>real warden site</h1>
+			<div id="character_name">jimmy bob</div>
+			<div id="character_level">1</div>
+			<div id="character_advance_points">1</div>
+		</div>
+		<div class="flex_container">
+			<div class="flex_element sidebar">
+				<input type="button", id="button1", value="hello">
+				<br>
+				<label>Title</label><input type="text", id="i_title", value=''>
+				<br>
+				<label>Alterations: </label><select id="s_alteration"></select>
+				<br>
+				<label>Paths: </label><select id="s_path"></select>
+				<hr>
+				<div id="sidebar_list">ya</div>
+			</div>
+			<div class="flex_element vertical_divider"></div>
+			<div class="flex_element" id="detail_view">
+				<h3>Saved</h3>
+			</div>
+		</div>
 		<script src='./index.js'></script>
 	</body>
 </html>

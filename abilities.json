@@ -1369,16 +1369,10 @@
       "alteration": "Magic",
       "title": "Essence Magic",
       "actions": "",
-      "description": "Essence magic is about manipulating pure magic energy.◆ Attack (R), Strain 4, Attack VS Special. You push an Attack Spell back to its caster by copying it. On a Success , the spell is reflected, targeting the caster.◆ Character (1), Focus, Strain 4. You dispel a magical effect from the character. Make a Daunting (20) roll. On a Success, the effect is dispelled.◆ Environment (1), Focus, Strain 1. You detect magical effects in the area, and traces of past magical activity. You canimmediately make a Recall Knowledge",
+      "description": "Essence magic is about manipulating pure magic energy.◆ Attack (R), Strain 4, Attack VS Special. You push an Attack Spell back to its caster by copying it. On a Success , the spell is reflected, targeting the caster.◆ Character (1), Focus, Strain 4. You dispel a magical effect from the character. Make a Daunting (20) roll. On a Success, the effect is dispelled.◆ Environment (1), Focus, Strain 1. You detect magical effects in the area, and traces of past magical activity. You canimmediately make a Recall Knowledge Check about any active or past effects with a Benefit using Special. ◆ Object (2), Focus, Strain 6. You dispel a magical effect from an object or structure. Make a Daunting (20) roll. On a Success, the effect is dispelled for 3 rounds. On a Critical Success,it is dispelled permanently.",
       "strain": "4",
       "requirement": "",
       "feats": [
-        {
-          "title": " Check about any active or past effects with a Benefit using Special.",
-          "actions": "",
-          "description": "◆ Object (2), Focus, Strain 6. You dispel a magical effect from an object or structure. Make a Daunting (20) roll. On a Success, the effect is dispelled for 3 rounds. On a Critical Success,it is dispelled permanently.",
-          "strain": "6"
-        },
         {
           "title": " Counterspell",
           "actions": "",

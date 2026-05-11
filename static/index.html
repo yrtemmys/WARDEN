@@ -45,9 +45,9 @@
 			}
 			.ability_title{
 				font-size: x-large;	
-				line-height: 1;
+				--line-height: 1;
 				font-weight: bold;
-				margin-bottom: -10px;
+				--margin-bottom: -10px;
 			}
 			.feat{
 			
@@ -55,18 +55,23 @@
 			.feat_title{	
 				font-size: large;
 				font-weight: bold;	
-				line-height: 0.1;
-				margin-top: 20px;
-				margin-bottom: -10px;
+				--line-height: 0.1;
+				--margin-top: 20px;
+				--margin-bottom: -10px;
+			}
+			.hidden{
+				display:none;
 			}
 		</style>
 	</head>
 	<body>
 		<div class="flex_container header">
 			<h1>real warden site</h1>
-			<div id="character_name">jimmy bob</div>
+			<input id="character_name" type='text' value='Joe Hendriks'/>
 			<div id="character_level">1</div>
 			<div id="character_advance_points">1</div>
+			<input type="button" id="get_character" value="laod char">
+			<input type="button" id="save_character" value="save char">
 		</div>
 		<div class="flex_container">
 			<div class="flex_element sidebar">

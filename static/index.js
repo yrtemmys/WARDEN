@@ -1,72 +1,189 @@
-let button = document.getElementById("button1")
-let output = document.getElementById("sidebar_list")
+let sidebar = document.getElementById("sidebar_list")
 let i_title = document.getElementById("i_title").value
 //let i_alteration = document.getElementById("i_alteration").value
 //let i_path = document.getElementById("i_path").value
 let s_alteration = document.getElementById("s_alteration")
 let s_path = document.getElementById("s_path")
+let detail_view = document.getElementById("detail_view")
 
-button.addEventListener("click", do_thing)
 
 const port = 8081
 const url = 'http://localhost:'+port+'/'
 
 async function fill_alterations(){
-	let alterations = await fetch('http://localhost:8081/alterations')
+	let alterations = await fetch(url+'alterations')
 	alterations = await alterations.json()
-	alterations = alterations[0]["values"]
+
 	s_alteration.innerHTML+=`<option value="`+'-1'+`">All</option>	`
-	alterations.forEach((alt)=>{
+	for(let alt in alterations){
+		alt = alterations[alt]
 		s_alteration.innerHTML+=`
-		<option value="`+alt[0]+`">`+alt[1]+`</option>
+		<option value="`+alt.alteration_id+`">`+alt.title+`</option>
 		`
-	})
+	}
 }
 fill_alterations()
 
 async function fill_paths(){
 	let paths = await fetch('http://localhost:8081/paths')
 	paths = await paths.json()
-	paths = paths[0]["values"]
-	console.log(paths)
+
 	s_path.innerHTML+=`<option value="`+'-1'+`">All</option>	`
-	paths.forEach((path)=>{
+	for(let p in paths){
+		p=paths[p]
 		s_path.innerHTML+=`
-		<option value="`+path[0]+`">`+path[1]+`</option>
+		<option value="`+p.path_id+`">`+p.title+`</option>
 		`
-	})
+	}
 }
 fill_paths()
 
-async function set_character_name(){
+async function load_character_to_cookies(id){
+	let c  = await fetch(url+'character/'+id)
+	document.character = await c.json()
+
+}
+load_character_to_cookies(1)
+
+document.getElementById('get_character').addEventListener('click', get_character)
+async function get_character(){
+	character = document.character
+	
 	let char_name = document.getElementById("character_name")
-	let name = await fetch(url+'character/1/name')
-	char_name.innerHTML = name
-}
-//set_character_name()
-async function set_character_level(){
 	let char_level = document.getElementById("character_level")
-	let level = await fetch(url+'character/1/level')
-	char_level.innerHTML = level
-}
-//set_character_level()
-async function set_character_advance_points(){
 	let char_advance_points = document.getElementById("character_advance_points")
-	let advance_points = await fetch(url+'character/1/advance_points')
-	char_advance_points.innerHTML = advance_points
+
+	char_name.value=character.meta[0].name
+	char_level.innerHTML=character.meta[0].level
+	char_advance_points.innerHTML=character.meta[0].advance_points
+
+	load_abilities_from_doc(document.character.abilities, detail_view)
+
 }
-//set_character_advance_points()
+
+let button = document.getElementById("button1")
+button.addEventListener("click", search_and_add)
+async function search_and_add(){
+	await search()
+	load_abilities_from_doc(document.warden_search_results, sidebar)
+}
+
+async function search(){
+	i_title = document.getElementById("i_title").value
+	let result
+	if(i_title!=''){
+		result = await fetch(url+'ability/'+i_title)
+	}else{
+		let index = 0
+		index = s_alteration.options.selectedIndex
+		let alt = s_alteration.options[index].innerHTML
+		index = s_path.options.selectedIndex
+		let path = s_path.options[index].innerHTML
+
+		result = await fetch(url+'abilities/'+path+'/'+alt)
+	}
+	if(result==undefined) return;
+	result = await result.json()
+
+	document.warden_search_results = result 
+
+	//return result
+}
+//function add_abilities_to_character_doc(result){
+//	for(let ability in result){
+//		ability=result[ability]
+//		let html = ability_to_html(ability,true)
+//		output.innerHTML += html
+//	}
+//}
+
+function ability_to_html(ability,button){
+	let html = `
+		<div class='ability'>
+			<div class='ability_title'>`+ability.title+` </div>
+			<div class='ability_description'>`+ability.description+`</div>
+	`
+	for(let feat in ability.feats){
+		feat = ability.feats[feat]
+		html +=`
+			<div class='feat'>
+				<div class='feat_title'>
+					<input type='checkbox'>
+					<label>`+feat.title+`<label>
+				</div>
+				<div class='feat_description'>`+feat.description+`</div>
+			</div>
+		`
+	}
+	if(button) html+=add_to_character_button()
+	html +=`
+		<div class='hidden json'>`+JSON.stringify(ability)+`</div>
+		</div>
+	`
+	return html
+}
+function add_to_character_button(){
+	return `
+		<div class='add_ability_to_charcter'>
+			<input type='button' class='add_ability_to_character_button' value='Add'/>
+		</div>
+	`
+}
+function load_abilities_from_doc(source, destination){
+	destination.innerHTML=''
+	let button = false
+	if(destination==sidebar) button=true
+	for(let ability in source){
+		ability= source[ability]
+		destination.innerHTML+= ability_to_html(ability,button)
+	}
+	if(button){
+		add_add_button_functionality()
+	}
+}
+function add_add_button_functionality(){
+	const add_buttons = document.getElementsByClassName("add_ability_to_character_button");
+	for(let i = 0; i<add_buttons.length; i++){
+		let b = add_buttons.item(i)
+		b.addEventListener("click", ()=>{
+			let html = b.parentElement.parentElement.outerHTML
+			html = html.substring(html.search('hidden json'))
+			html = html.substring(html.search('{'),html.search('</div>'))
+			let json = JSON.parse(html)
+			document.character.abilities.push(json)
+			load_abilities_from_doc(document.character.abilities, detail_view)
+		})
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 async function do_thing(){
 	
 	i_title = document.getElementById("i_title").value
 
 	let si = s_alteration.options.selectedIndex
 	let s_alt = s_alteration.options[si]
-	console.log(s_alt.value + ' '+ s_alt.innerHTML)
+	//console.log(s_alt.value + ' '+ s_alt.innerHTML)
 
 	si = s_path.options.selectedIndex
 	let selected_path = s_path.options[si]
-	console.log(selected_path.value + ' '+ selected_path.innerHTML)
+	//console.log(selected_path.value + ' '+ selected_path.innerHTML)
 	
 	let statement = ''
 	if(i_title==''){
@@ -74,11 +191,9 @@ async function do_thing(){
 	}else{
 		statement = "http://localhost:8081/ability/"+i_title
 	}
-	console.log(statement)
 	const result = await fetch(statement)
 	let data = await result.json()
 	data = data[0]["values"]
-	console.log(data)
 	let out = ''    //"<div class='ability'>"
 	for(let i=0; i<data.length; i++){
 		if(data[i][0]!=null){
@@ -118,12 +233,8 @@ async function do_thing(){
 	for(let i = 0; i<add_buttons.length; i++){
 		let b = add_buttons.item(i)
 		b.addEventListener("click", ()=>{
-			document.getElementById("detail_view").innerHTML += b.parentElement.outerHTML 
-			console.log(b.parentElement)
+			detail_view.innerHTML += b.parentElement.outerHTML 
 		})
 	}
 }
 
-function addAbility(a){
-	console.log(a)
-}

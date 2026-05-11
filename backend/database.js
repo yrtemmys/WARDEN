@@ -96,6 +96,7 @@ create table skills(
 create table character_has_skill(
 	character_id interger references character(character_id),
 	skill_id integer references skills(skill_id),
+	value integer,
 	primary key (character_id, skill_id)
 );
 
@@ -213,6 +214,7 @@ create view character_sheet_grouped as
 
 	insert into resources(title, short_name) values ("Hit Points", "HP");
 	insert into resources(title, short_name) values ("Strain", "SP");
+	insert into resources(title, short_name) values ("Speed", "m");
 	insert into paths(title) values("Toughness");
 	insert into paths(title) values("Resolve");
 	insert into paths(title) values("Perception");
@@ -231,6 +233,8 @@ create view character_sheet_grouped as
 		values("Jimmy Bob", 0, "Get Rich; Kill puppies", 1, 3);
 	insert into character_has_resource values(1,1,10);
 	insert into character_has_resource values(1,2,10);
+	insert into character_has_resource values(1,3,5);
+
 	insert into character_has_rank values (1,1,3);
 	insert into character_has_rank values (1,2,1);
 	insert into character_has_rank values (1,3,4);
@@ -238,14 +242,17 @@ create view character_sheet_grouped as
 	insert into character_has_rank values (1,6,0);
 	insert into character_has_rank values (1,7,0);
 
-	insert into character_has_rank values (1,8,90);
-
 	insert into character_has_origin values (1,1);
 	insert into character_has_origin values (1,2);
-	insert into character_has_skill values (1,1);
-	insert into character_has_skill values (1,2);
-	insert into character_has_skill values (1,3);
-	insert into character_has_skill values (1,4);
+	insert into character_has_skill values (1,1,0);
+	insert into character_has_skill values (1,2,0);
+	insert into character_has_skill values (1,3,0);
+	insert into character_has_skill values (1,4,0);
+
+	insert into character_has_ability values(1,7);
+	insert into character_has_ability values(1,19);
+	insert into character_has_ability values(1,89);
+	insert into character_has_ability values(1,160);
 `)
 
 

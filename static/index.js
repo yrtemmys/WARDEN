@@ -93,7 +93,8 @@ document.getElementById('save_character').addEventListener("click", save_charact
 async function save_character(){
 	await fetch(url+'save', {
 		method: 'POST',
-		body: JSON.stringify({username:'example'})//JSON.stringify(document.character)
+		headers:{"Content-Type":'application/json'},
+		body: JSON.stringify(document.character)
 	})
 }
 

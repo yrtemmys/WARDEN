@@ -1,7 +1,7 @@
 import express from 'express'
 import http from 'http'
 import db from './backend/database.js'
-import {select, ability_by_title, select_alterations, select_paths,select_by_path_alteration} from './backend/db_routes.js'
+import {select, ability_by_title, select_alterations, select_paths,select_by_path_alteration, select_character} from './backend/db_routes.js'
 
 let app = express()
 let port = 8081
@@ -19,6 +19,7 @@ app.all('/ability/:title', ability_by_title)
 app.all('/alterations', select_alterations)
 app.all('/paths', select_paths)
 app.all('/abilities/:path/:alteration', select_by_path_alteration)
+app.all('/character/:id', select_character)
 
 app.listen(port, ()=>{
 	console.log('Running on port: '+port)

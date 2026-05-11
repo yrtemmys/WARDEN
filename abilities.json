@@ -836,14 +836,8 @@
         {
           "title": " Bullet Dodge (0)",
           "actions": "0",
-          "description": "Strain 1. You use the Dodge action whileFocusing on Bullet Time. You gain a +2",
+          "description": "Strain 1. You use the Dodge action whileFocusing on Bullet Time. You gain a +2 Universal Bonus to your Toughness and Perception for the duration of the Dodge.",
           "strain": "1"
-        },
-        {
-          "title": " Universal Bonus to your Toughness and Perception for the duration of the Dodge.",
-          "actions": "",
-          "description": "",
-          "strain": ""
         },
         {
           "title": " Faster than the Eye (1)",

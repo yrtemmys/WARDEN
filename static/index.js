@@ -8,6 +8,7 @@ let s_path = document.getElementById("s_path")
 
 button.addEventListener("click", do_thing)
 
+const port = 8081
 const url = 'http://localhost:'+port+'/'
 
 async function fill_alterations(){
@@ -42,19 +43,19 @@ async function set_character_name(){
 	let name = await fetch(url+'character/1/name')
 	char_name.innerHTML = name
 }
-set_character_name()
+//set_character_name()
 async function set_character_level(){
 	let char_level = document.getElementById("character_level")
 	let level = await fetch(url+'character/1/level')
 	char_level.innerHTML = level
 }
-set_character_level()
+//set_character_level()
 async function set_character_advance_points(){
 	let char_advance_points = document.getElementById("character_advance_points")
 	let advance_points = await fetch(url+'character/1/advance_points')
 	char_advance_points.innerHTML = advance_points
 }
-set_character_advance_points()
+//set_character_advance_points()
 async function do_thing(){
 	
 	i_title = document.getElementById("i_title").value

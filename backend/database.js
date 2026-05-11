@@ -248,7 +248,6 @@ create view character_sheet_grouped as
 	insert into character_has_skill values (1,4);
 `)
 
-console.log(db.exec(`select * from character_sheet_grouped`)[0])
 
 
 

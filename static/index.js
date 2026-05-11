@@ -25,7 +25,7 @@ async function fill_alterations(){
 fill_alterations()
 
 async function fill_paths(){
-	let paths = await fetch('http://localhost:8081/paths')
+	let paths = await fetch(url+'paths')
 	paths = await paths.json()
 
 	s_path.innerHTML+=`<option value="`+'-1'+`">All</option>	`
@@ -38,12 +38,11 @@ async function fill_paths(){
 }
 fill_paths()
 
-async function load_character_to_cookies(id){
+async function load_character_to_doc(id){
 	let c  = await fetch(url+'character/'+id)
 	document.character = await c.json()
-
 }
-load_character_to_cookies(1)
+load_character_to_doc(1)
 
 document.getElementById('get_character').addEventListener('click', get_character)
 async function get_character(){
@@ -89,6 +88,15 @@ async function search(){
 
 	//return result
 }
+
+document.getElementById('save_character').addEventListener("click", save_character)
+async function save_character(){
+	await fetch(url+'save', {
+		method: 'POST',
+		body: JSON.stringify({username:'example'})//JSON.stringify(document.character)
+	})
+}
+
 //function add_abilities_to_character_doc(result){
 //	for(let ability in result){
 //		ability=result[ability]

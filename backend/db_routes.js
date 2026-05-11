@@ -75,6 +75,10 @@ export async function select_character(req, res){
 	res.send(result)
 }
 
+export async function save_character(req, res){
+	console.log(req.body)	
+}
+
 function sql_to_json(sql){
 	if (sql == undefined) return;
 	let columns = {}

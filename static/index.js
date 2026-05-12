@@ -42,22 +42,31 @@ async function load_character_to_doc(id){
 	let c  = await fetch(url+'character/'+id)
 	document.character = await c.json()
 }
-load_character_to_doc(1)
+//load_character_to_doc(1)
 
 document.getElementById('get_character').addEventListener('click', get_character)
 async function get_character(){
+	let id_field = document.getElementById('character_id').value
+	await load_character_to_doc(id_field)
+
+
 	character = document.character
 	
+	character_from_doc_to_page()
+
+}
+
+function write_character_to_doc(){
 	let char_name = document.getElementById("character_name")
 	let char_level = document.getElementById("character_level")
 	let char_advance_points = document.getElementById("character_advance_points")
 
-	char_name.value=character.meta[0].name
-	char_level.innerHTML=character.meta[0].level
-	char_advance_points.innerHTML=character.meta[0].advance_points
-
-	load_abilities_from_doc(document.character.abilities, detail_view)
-
+	let character = document.character
+	let meta = character.meta
+	meta.name = char_name.value
+	meta.level = char_level.innerHTML
+	meta.advance_points = char_advance_points.innerHTML
+	
 }
 
 let button = document.getElementById("button1")
@@ -91,11 +100,24 @@ async function search(){
 
 document.getElementById('save_character').addEventListener("click", save_character)
 async function save_character(){
+	write_character_to_doc()
 	await fetch(url+'save', {
 		method: 'POST',
 		headers:{"Content-Type":'application/json'},
 		body: JSON.stringify(document.character)
 	})
+}
+
+document.getElementById('new_character').addEventListener('click', new_character)
+async function new_character(){
+	let new_id = await fetch(url+'next_id')
+	new_id=await new_id.json()
+
+	let id_field = document.getElementById('character_id')
+	id_field.value=new_id
+
+	return new_id
+
 }
 
 //function add_abilities_to_character_doc(result){
@@ -165,11 +187,69 @@ function add_add_button_functionality(){
 	}
 }
 
+document.getElementById('export_character').addEventListener('click', export_character)
+async function export_character(){
+	const data = new Blob([JSON.stringify(document.character)],{type:'application/json'})
+
+	if(window.showSaveFilePicker){
+		const fileHandler = await window.showSaveFilePicker({
+			types:[{description: 'JSON File', accept:{'application/json':['.json']}}]
+		})
+		const fileStream = await fileHandler.createWritable()
+
+		await fileSteam.write(data)
+		await fileSteam.close()
+	}else{
+		const url = URL.createObjectURL(data)
+		const a = document.createElement('a')
+		a.href = url
+		a.download = document.character.meta.name+'.json'
+		a.click()
+		URL.revokeObjectURL(url)
+	}
+}
 
 
+document.getElementById('import_character').addEventListener('change', import_character)
+async function import_character(){
+	let fileReader = new FileReader()
+	fileReader.onload = (async function(){
+		let id = await new_character()
+		console.log(id)
+		let imported_character = JSON.parse(fileReader.result)
+		imported_character.meta.character_id = id
 
+		document.character=imported_character
+		character_from_doc_to_page()
+	})
+	fileReader.readAsText(this.files[0])
+}
 
+function character_from_doc_to_page(){
+	let c = document.character
 
+	let char_name = document.getElementById("character_name")
+	let char_level = document.getElementById("character_level")
+	let char_advance_points = document.getElementById("character_advance_points")
+
+	char_name.value=c.meta.name
+	char_level.innerHTML=c.meta.level
+	char_advance_points.innerHTML=c.meta.advance_points
+
+	load_abilities_from_doc(c.abilities, detail_view)
+
+}
+
+(()=>{
+	let btns = document.getElementsByClassName('toggle_popup')
+	for(let i of Array(btns.length).keys()){
+		btns.item(i).addEventListener('click', ()=>{
+			let c = document.getElementById('controls')
+			c.classList.toggle('hidden')
+		})
+	}
+})()
+	
 
 
 

@@ -62,16 +62,41 @@
 			.hidden{
 				display:none;
 			}
+			.popup{
+				position:absolute;
+				z-index: 1;
+			}
+			.options{
+				background-color: #001105;
+				width: 90%;
+				height: 90%;
+				left: 4%;
+				top: 4%;
+				border-radius: 2%;
+				border-style: solid;
+				border-width: 5px;
+				border-color: #668822;
+				padding: 1%;
+			}
 		</style>
 	</head>
 	<body>
+		<div class='popup options hidden' id='controls'>
+			<h1>Controls</h1>
+			<input type="button" id="get_character" value="laod char">
+			<input type="button" id="save_character" value="save char">
+			<input type='text' id='character_id' value='1'/>
+			<input type='button' id='new_character' value='New Character'/>
+			<input type='button' id='export_character' value='Export Character'/>
+			<input type='file' id='import_character' value='Import Character'/>
+			<input type='button' class='toggle_popup' value='Controls'/>
+		</div>
 		<div class="flex_container header">
 			<h1>real warden site</h1>
 			<input id="character_name" type='text' value='Joe Hendriks'/>
 			<div id="character_level">1</div>
 			<div id="character_advance_points">1</div>
-			<input type="button" id="get_character" value="laod char">
-			<input type="button" id="save_character" value="save char">
+			<input type='button' class='toggle_popup' value='Controls'/>
 		</div>
 		<div class="flex_container">
 			<div class="flex_element sidebar">
@@ -88,6 +113,12 @@
 			<div class="flex_element vertical_divider"></div>
 			<div class="flex_element" id="detail_view">
 				<h3>Saved</h3>
+				<div id='char_meta'></div>
+				<div id='char_resources'></div>
+				<div id='char_ranks'></div>
+				<div id='char_origins'></div>
+				<div id='char_skills'></div>
+				<div id='char_abilities'></div>
 			</div>
 		</div>
 		<script src='./index.js'></script>

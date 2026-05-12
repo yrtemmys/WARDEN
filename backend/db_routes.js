@@ -13,10 +13,14 @@ export async function ability_by_title(req, res){
 	let title = req.params.title
 	let feat = req.params.feat
 
+	let result = await ability_by_title_local(title)
+	res.send(result)
+}
+async function ability_by_title_local(title){
 	let result = db.exec('select * from abilities_readable where title like "%'+title+'%" or parent like "%'+title+'%"')[0]
 	result = sql_to_json(result)
 	result = condense_feats(result)
-	res.send(result)
+	return result
 }
 
 export async function select_alterations(req, res){
@@ -51,6 +55,11 @@ export async function select_character(req, res){
 	let id = req.params.id
 	let result = {}
 
+	let exists = (1==db.exec(`select count(*) from character where character_id=`+id)[0].values[0][0])
+	
+	if(!exists){
+		db.run(`insert into character values(`+id+`, '', 0,'',0,0)`)
+	}
 	result.meta = db.exec(`select * from character ch where ch.character_id=`+id)[0]
 	result.abilities = db.exec(`select title from character_has_ability cha join abilities a on cha.ability_id = a.ability_id where character_id=`+id)[0]
 	result.resources = db.exec(`
@@ -65,8 +74,20 @@ export async function select_character(req, res){
 		result[x]=sql_to_json(result[x])
 	}
 	
-	//console.log(top_level_this_json(result.meta))
+	//result.meta = top_level_this_json(result.meta)
+	result.meta = result.meta[0]
 	//console.log(top_level_this_json(result.abilities))
+	
+
+	let ab = []
+	for(let a in result.abilities){
+		a = result.abilities[a]
+		a = await ability_by_title_local(a.title)
+		ab.push(a[0])
+	}
+	result.abilities=ab
+
+
 	result.resources = top_level_this_json(result.resources)
 	result.ranks = top_level_this_json(result.ranks)
 	//console.log(top_level_this_json(result.origin))
@@ -76,11 +97,97 @@ export async function select_character(req, res){
 }
 
 export async function save_character(req, res){
-	console.log(req.body)	
+	let character = req.body
+	let meta = character.meta
+	let id = meta.character_id
+
+	//meta	
+	let exists = (1==db.exec(`select count(*) from character where character_id=`+id)[0].values[0][0])
+	let sql
+	if(exists){
+		sql = `
+		update character 
+		set 	name="`+meta.name+`", 
+			advance_points=`+meta.advance_points+`,
+			goals="`+meta.goals+`",
+			level=`+meta.level+`,
+			wealth=`+meta.wealth+`
+		where character_id=`+id+`
+	`
+	}else{
+		sql = `
+		insert into character values(
+			`+id+`,
+			"`+meta.name+`",
+			`+meta.advance_points+`,
+			"`+meta.goals+`",
+			`+meta.level+`,
+			`+meta.wealth+`
+		)
+		`
+	}
+
+	db.run(sql)
+
+	// abilities
+	for(let a in character.abilities){
+		a = character.abilities[a]
+		sql = `insert into character_has_ability values(`+id+`,(
+			select ability_id from abilities where title = "`+a.title+`" limit 1
+		))`
+		db.run(sql)
+		//for(let f in a.feats){
+		//	f = a.feats[f]
+		//	sql = `insert into character_has_ability values(`+id+`,(
+		//		select ability_id from abilities where title = "`+f.title+`" limit 1
+		//	))`
+		//	db.run(sql)
+		//}
+
+	}
+
+	// resources
+	for(let r in character.resources){
+		let v  = character.resources[r]
+		sql = `insert into character_has_resource values(`+id+`,(
+			select resource_id from resources where title="`+r+`" limit 1	
+		), `+v+`)`
+		db.run(sql)
+	}	
+	// ranks
+	for(let r in character.ranks){
+		let v  = character.ranks[r]
+		sql = `insert into character_has_rank values(`+id+`,(
+			select path_id from paths where title="`+r+`" limit 1
+		), `+v+`)`
+		db.run(sql)
+	}	
+	// origin
+	for(let o in character.origin){
+		o = character.origin[o]
+		sql = `insert into character_has_origin values(`+id+`, (
+			select origin_id from origins where title="`+o.title+`" limit 1
+		))`
+		db.run(sql)
+	}
+	// skill
+	for(let s in character.skills){
+		let v  = character.skills[s]
+		sql = `insert into character_has_skill values(`+id+`,(
+			select skill_id from skill where title="`+s+`" limit 1
+		), `+v+`)`
+		db.run(sql)
+	}	
+
+}
+
+export async function next_character_id(req, res){
+	let next_id = db.exec(`select max(character_id) as id from character`)[0].values[0][0]+1
+	res.send(next_id)
 }
 
 function sql_to_json(sql){
-	if (sql == undefined) return;
+	if (sql == undefined) return [];
 	let columns = {}
 	sql.columns.forEach((column)=>{
 		columns[column]= ''

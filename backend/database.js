@@ -249,10 +249,10 @@ create view character_sheet_grouped as
 	insert into character_has_skill values (1,3,0);
 	insert into character_has_skill values (1,4,0);
 
-	insert into character_has_ability values(1,7);
-	insert into character_has_ability values(1,19);
-	insert into character_has_ability values(1,89);
-	insert into character_has_ability values(1,160);
+	insert into character_has_ability values(1,1);
+	insert into character_has_ability values(1,17);
+	insert into character_has_ability values(1,88);
+	insert into character_has_ability values(1,159);
 `)
 
 

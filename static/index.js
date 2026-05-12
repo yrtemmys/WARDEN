@@ -131,23 +131,25 @@ function ability_to_html(ability,button){
 	let html = `
 		<div class='ability'>
 			<div class='ability_title'>`+ability.title+` </div>
-			<div class='ability_description'>`+ability.description+`</div>
+			<div class='collapsible hidden'>
+				<div class='ability_description'>`+ability.description+`</div>
 	`
 	for(let feat in ability.feats){
 		feat = ability.feats[feat]
 		html +=`
-			<div class='feat'>
-				<div class='feat_title'>
-					<input type='checkbox'>
-					<label>`+feat.title+`<label>
+				<div class='feat'>
+					<div class='feat_title'>
+						<input type='checkbox'>
+						<label>`+feat.title+`<label>
+					</div>
+					<div class='feat_description'>`+feat.description+`</div>
 				</div>
-				<div class='feat_description'>`+feat.description+`</div>
-			</div>
 		`
 	}
 	if(button) html+=add_to_character_button()
 	html +=`
-		<div class='hidden json'>`+JSON.stringify(ability)+`</div>
+				<div class='hidden json'>`+JSON.stringify(ability)+`</div>
+			</div>
 		</div>
 	`
 	return html
@@ -170,18 +172,31 @@ function load_abilities_from_doc(source, destination){
 	if(button){
 		add_add_button_functionality()
 	}
+	add_collapse_to_ability(destination)
 }
 function add_add_button_functionality(){
 	const add_buttons = document.getElementsByClassName("add_ability_to_character_button");
 	for(let i = 0; i<add_buttons.length; i++){
 		let b = add_buttons.item(i)
 		b.addEventListener("click", ()=>{
-			let html = b.parentElement.parentElement.outerHTML
+			event.stopPropagation()
+			let html = b.parentElement.parentElement.outerHTML +''
 			html = html.substring(html.search('hidden json'))
 			html = html.substring(html.search('{'),html.search('</div>'))
-			let json = JSON.parse(html)
+			let json = JSON.parse(JSON.stringify(JSON.parse(html)))
 			document.character.abilities.push(json)
 			load_abilities_from_doc(document.character.abilities, detail_view)
+		})
+	}
+}
+function add_collapse_to_ability(destination){
+	let col = destination.getElementsByClassName('ability')
+	for(let i of Array(col.length).keys()){
+		let to_collapse = col.item(i).getElementsByClassName('collapsible')
+		to_collapse=to_collapse.item(0)
+		col.item(i).addEventListener('click', ()=>{
+			event.stopPropagation()
+			to_collapse.classList.toggle('hidden')
 		})
 	}
 }
@@ -288,6 +303,7 @@ function calc_doc(){
 	for(let s in c.skill){
 		c.skill[s] = c.ranks['Skill']
 	}
+
 
 	doc_to_page()
 }
